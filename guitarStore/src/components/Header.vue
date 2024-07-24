@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 
-
+import BubblCart from './BubblCart.vue';
 
 const props = defineProps({
 
@@ -20,6 +20,10 @@ const total = computed(()=>{
 
     return props.cart.reduce((va,product)=>va+(product.precio*product.cantidad),0)
 })
+const numberItem= computed(()=>{
+    return props.cart.reduce((va,product)=>va+(product.cantidad),0)
+
+})
 </script>
 <template>
     <header class="py-5 header">
@@ -32,7 +36,15 @@ const total = computed(()=>{
                 </div>
                 <nav class="col-md-6 a mt-5 d-flex align-items-start justify-content-end">
                     <div class="carrito">
-                        <img class="img-fluid" src="/img/carrito.png" alt="imagen carrito" />
+                        <div>
+                            <BubblCart
+                            :quantity="numberItem"
+                            />
+
+                           
+                            <img class="img-fluid" src="/img/carrito.png" alt="imagen carrito" />
+                        
+                        </div>
 
                         <div id="carrito" class="bg-white p-3">
                             <p v-if="cart.length == 0" class="text-center">cart is empty</p>
