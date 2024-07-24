@@ -9,8 +9,10 @@ const props= defineProps({
 </script>
 
 <template>
-<p v-if="quantity>9" id="quantity" >9+</p>
-<p v-if="quantity<=9" id="quantity" >{{quantity}}</p>
+<p v-if="quantity<1" id="quantity" ></p>
+<p v-else-if="quantity>9" id="quantity" >9+</p>
+<p v-else="quantity>9" id="quantity" >{{quantity}}</p>
+
 
 
 </template>
@@ -21,10 +23,10 @@ const props= defineProps({
     color: white;
     border-radius: 50%;
     text-align: center;
-    position: relative;
+    position: absolute;
     margin: 0;
-    width: 10% I !important;
-    top: 10px !important ;
+    width: 65%  ;
+    top: 10px  ;
 
 }
 </style>
