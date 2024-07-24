@@ -1,37 +1,43 @@
-
 <script setup>
+import { computed } from 'vue';
+
 
 
 const props = defineProps({
 
-    cart:{
-        type:Array,
-        required:true
+    cart: {
+        type: Array,
+        required: true
     },
-    mainGuitar:{
-        type:Object,
-        required:true
+    mainGuitar: {
+        type: Object,
+        required: true
     }
 })
-defineEmits(['less-one','add-one','add-cart'])
+defineEmits(['less-one', 'add-one', 'add-cart','delete-item','clean-cart'])
+
+const total = computed(()=>{
+
+    return props.cart.reduce((va,product)=>va+(product.precio*product.cantidad),0)
+})
 </script>
 <template>
     <header class="py-5 header">
-            <div class="container-xl">
-                <div class="row justify-content-center justify-content-md-between">
-                    <div class="col-8 col-md-3">
-                        <a href="index.html">
-                            <img class="img-fluid" src="/img/logo.svg" alt="imagen logo">
-                        </a>
-                    </div>
-                    <nav class="col-md-6 a mt-5 d-flex align-items-start justify-content-end">
-                        <div class="carrito">
-                            <img class="img-fluid" src="/img/carrito.png" alt="imagen carrito" />
+        <div class="container-xl">
+            <div class="row justify-content-center justify-content-md-between">
+                <div class="col-8 col-md-3">
+                    <a href="index.html">
+                        <img class="img-fluid" src="/img/logo.svg" alt="imagen logo">
+                    </a>
+                </div>
+                <nav class="col-md-6 a mt-5 d-flex align-items-start justify-content-end">
+                    <div class="carrito">
+                        <img class="img-fluid" src="/img/carrito.png" alt="imagen carrito" />
 
-                            <div id="carrito" class="bg-white p-3">
-                                <p v-if="cart.length==0" class="text-center">cart is empty</p>
-                                <div v-else>
-                                <table  class="w-100 table">
+                        <div id="carrito" class="bg-white p-3">
+                            <p v-if="cart.length == 0" class="text-center">cart is empty</p>
+                            <div v-else>
+                                <table class="w-100 table">
                                     <thead>
                                         <tr>
                                             <th>Imagen</th>
@@ -43,28 +49,30 @@ defineEmits(['less-one','add-one','add-cart'])
                                     </thead>
                                     <tbody>
                                         <tr v-for="product in cart">
-                                            <td >
-                                                <img class="img-fluid" :src="'/img/'+product.imagen+'.jpg'" alt="imagen guitarra">
+                                            <td>
+                                                <img class="img-fluid" :src="'/img/' + product.imagen + '.jpg'"
+                                                    alt="imagen guitarra">
                                             </td>
-                                            <td>{{product.nombre}}</td>
+                                            <td>{{ product.nombre }}</td>
                                             <td class="fw-bold">
-                                                ${{product.precio*product.cantidad}}
+                                                ${{ product.precio * product.cantidad }}
                                             </td>
                                             <td class="flex align-items-start gap-4">
-                                                <button 
-                                            @click="$emit('less-one',product)"
-                                                type="button" class="btn btn-dark">
+                                                <button @click="$emit('less-one', product)" type="button"
+                                                    class="btn btn-dark">
                                                     -
                                                 </button>
-                                               {{product.cantidad}}
-                                                <button type="button" 
-                                                class="btn btn-dark"
-                                                @click="$emit('add-one',product)">
+                                                {{ product.cantidad }}
+                                                <button type="button" class="btn btn-dark"
+                                                    @click="$emit('add-one', product)">
                                                     +
                                                 </button>
                                             </td>
                                             <td>
-                                                <button class="btn btn-danger" type="button">
+                                                <button 
+                                                @click="$emit('delete-item',product)"
+                                                
+                                                class="btn btn-danger" type="button">
                                                     X
                                                 </button>
                                             </td>
@@ -72,32 +80,30 @@ defineEmits(['less-one','add-one','add-cart'])
                                     </tbody>
                                 </table>
 
-                                <p class="text-end">Total pagar: <span class="fw-bold">$899</span></p>
-                                <button class="btn btn-dark w-100 mt-3 p-2">Vaciar Carrito</button>
-                            </div>
+                                <p class="text-end">Total pagar: <span class="fw-bold">{{total}}</span></p>
+                                <button 
+                                @click="$emit('clean-cart')"
+                                class="btn btn-dark w-100 mt-3 p-2">Vaciar Carrito</button>
                             </div>
                         </div>
-                    </nav>
-                </div><!--.row-->
-
-                <div class="row mt-5">
-                    <div class="col-md-6 text-center text-md-start pt-5">
-                        <h1 class="display-2 fw-bold">Modelo {{mainGuitar.nombre}}</h1>
-                        <p class="mt-5 fs-5 text-white">
-                            {{mainGuitar.descripcion}}
-                        </p>
-                        <p class="text-primary fs-1 fw-black">{{mainGuitar.precio}}</p>
-                        <button
-                            @click="$emit('add-cart',mainGuitar)"
-                         type="button" class="btn fs-4 bg-primary text-white py-2 px-5">Agregar al
-                            Carrito</button>
                     </div>
+                </nav>
+            </div><!--.row-->
+
+            <div class="row mt-5">
+                <div class="col-md-6 text-center text-md-start pt-5">
+                    <h1 class="display-2 fw-bold">Modelo {{ mainGuitar.nombre }}</h1>
+                    <p class="mt-5 fs-5 text-white">
+                        {{ mainGuitar.descripcion }}
+                    </p>
+                    <p class="text-primary fs-1 fw-black">${{ mainGuitar.precio }}</p>
+                    <button @click="$emit('add-cart', mainGuitar)" type="button"
+                        class="btn fs-4 bg-primary text-white py-2 px-5">Agregar al
+                        Carrito</button>
                 </div>
             </div>
+        </div>
 
-            <img class="header-guitarra" src="/img/header_guitarra.png" alt="imagen header">
-        </header>
+        <img class="header-guitarra" src="/img/header_guitarra.png" alt="imagen header">
+    </header>
 </template>
-
-
-

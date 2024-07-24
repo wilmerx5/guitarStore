@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import Footer from './components/Footer.vue';
 import Guitar from './components/Guitar.vue';
 import Header from './components/Header.vue';
@@ -13,8 +13,22 @@ onMounted(() => {
     console.log("component ready")
     guitars.value = db
     mainGuitar.value=db[3]
+
+
+    let savedCart = localStorage.getItem('cart')
+
+    if(savedCart){
+        cart.value=JSON.parse(savedCart)
+    }
+
+   
 })
 
+watch(cart,()=>{
+saveCartLocalStore()
+},{
+deep:true
+})
 
 const addCart = (guitar) => {
     const alreadyExist = cart.value.findIndex(p => p.id == guitar.id)
@@ -35,6 +49,7 @@ const lessOne = (guitar) => {
     cart.value[index].cantidad == 1 ? '': cart.value[index].cantidad--
 
 
+
 }
 
 const addOne = (guitar) => {
@@ -43,8 +58,19 @@ const addOne = (guitar) => {
     cart.value[index].cantidad++
 }
 
-const onChangeMainGuitar=()=>{
+const deleteItem=(guitar)=>{
 
+    cart.value= cart.value.filter((e)=>e.id!=guitar.id)
+   
+
+}
+
+const saveCartLocalStore=()=>{
+
+    localStorage.setItem('cart',JSON.stringify(cart.value))
+}
+const cleanCart=()=>{
+    cart.value=[]
 }
 </script>
 
@@ -69,6 +95,8 @@ const onChangeMainGuitar=()=>{
         @add-one="addOne"
         :mainGuitar=mainGuitar
         @add-cart="addCart"
+        @delete-item="deleteItem"
+        @clean-cart="cleanCart"
         />
 
         <main class="container-xl mt-5">
