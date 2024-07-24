@@ -7,16 +7,44 @@ import { db } from './data/data';
 
 const guitars = ref([])
 const cart = ref([])
+const mainGuitar = ref({})
 
 onMounted(() => {
     console.log("component ready")
     guitars.value = db
+    mainGuitar.value=db[3]
 })
 
 
 const addCart = (guitar) => {
-    cart.value.push(guitar)
+    const alreadyExist = cart.value.findIndex(p => p.id == guitar.id)
+
+    if (alreadyExist == -1) {
+
+        cart.value.push({ cantidad: 1, ...guitar })
+    }
+    else {
+        cart.value[alreadyExist].cantidad++
+    }
     console.log(cart.value)
+}
+
+const lessOne = (guitar) => {
+    const index = cart.value.findIndex(p => p.id == guitar.id)
+
+    cart.value[index].cantidad == 1 ? '': cart.value[index].cantidad--
+
+
+}
+
+const addOne = (guitar) => {
+    const index = cart.value.findIndex(p => p.id == guitar.id)
+
+    cart.value[index].cantidad++
+}
+
+const onChangeMainGuitar=()=>{
+
 }
 </script>
 
@@ -35,8 +63,12 @@ const addCart = (guitar) => {
     </head>
 
     <body>
-        <Header
-        :cart="cart"
+        <Header 
+        :cart="cart" 
+        @less-one="lessOne" 
+        @add-one="addOne"
+        :mainGuitar=mainGuitar
+        @add-cart="addCart"
         />
 
         <main class="container-xl mt-5">
@@ -55,4 +87,3 @@ const addCart = (guitar) => {
     </body>
 
 </template>
-

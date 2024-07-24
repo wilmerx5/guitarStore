@@ -5,11 +5,15 @@
 const props = defineProps({
 
     cart:{
+        type:Array,
+        required:true
+    },
+    mainGuitar:{
         type:Object,
         required:true
     }
 })
-
+defineEmits(['less-one','add-one','add-cart'])
 </script>
 <template>
     <header class="py-5 header">
@@ -38,20 +42,24 @@ const props = defineProps({
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>
-                                                <img class="img-fluid" src="/img/guitarra_02.jpg" alt="imagen guitarra">
+                                        <tr v-for="product in cart">
+                                            <td >
+                                                <img class="img-fluid" :src="'/img/'+product.imagen+'.jpg'" alt="imagen guitarra">
                                             </td>
-                                            <td>SRV</td>
+                                            <td>{{product.nombre}}</td>
                                             <td class="fw-bold">
-                                                $299
+                                                ${{product.precio*product.cantidad}}
                                             </td>
                                             <td class="flex align-items-start gap-4">
-                                                <button type="button" class="btn btn-dark">
+                                                <button 
+                                            @click="$emit('less-one',product)"
+                                                type="button" class="btn btn-dark">
                                                     -
                                                 </button>
-                                                1
-                                                <button type="button" class="btn btn-dark">
+                                               {{product.cantidad}}
+                                                <button type="button" 
+                                                class="btn btn-dark"
+                                                @click="$emit('add-one',product)">
                                                     +
                                                 </button>
                                             </td>
@@ -74,14 +82,14 @@ const props = defineProps({
 
                 <div class="row mt-5">
                     <div class="col-md-6 text-center text-md-start pt-5">
-                        <h1 class="display-2 fw-bold">Modelo VAI</h1>
-                        <p class="mt-5 fs-5 text-white">Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                            Temporibus,
-                            possimus quibusdam dolor nemo velit quo, fuga omnis, iure molestias optio tempore sint at
-                            ipsa dolorum
-                            odio exercitationem eos inventore odit.</p>
-                        <p class="text-primary fs-1 fw-black">$399</p>
-                        <button type="button" class="btn fs-4 bg-primary text-white py-2 px-5">Agregar al
+                        <h1 class="display-2 fw-bold">Modelo {{mainGuitar.nombre}}</h1>
+                        <p class="mt-5 fs-5 text-white">
+                            {{mainGuitar.descripcion}}
+                        </p>
+                        <p class="text-primary fs-1 fw-black">{{mainGuitar.precio}}</p>
+                        <button
+                            @click="$emit('add-cart',mainGuitar)"
+                         type="button" class="btn fs-4 bg-primary text-white py-2 px-5">Agregar al
                             Carrito</button>
                     </div>
                 </div>
